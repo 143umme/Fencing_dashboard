@@ -1,7 +1,28 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import os
+import pandas as pd
 
+# ── Private data upload ── (only shown online)
+if "df_main" not in st.session_state:
+    st.sidebar.title("Upload Confidential Data (one-time)")
+    
+    main_csv = st.sidebar.file_uploader(
+        "1. Fencing preseason Final Data.csv",
+        type="csv"
+    )
+    iso_csv = st.sidebar.file_uploader(
+        "2. Fencing_Preseason_Isokinetic data.csv",
+        type="csv"
+    )
+
+    if main_csv and iso_csv:
+        st.session_state.df_main = pd.read_csv(main_csv, encoding='latin-1')
+        st.session_state.df_iso = pd.read_csv(iso_csv, encoding='latin-1')
+        st.sidebar.success("Files uploaded — dashboard ready!")
+    else:
+        st.sidebar.warning("Please upload both files above to continue.")
+        st.stop()   # ← stops execution until files are uploaded
 # Import all your plotting functions
 from data_transform import (
     load_data, clean_data,
@@ -39,11 +60,22 @@ st.markdown("""
 # === LOAD & CLEAN DATA ===
 @st.cache_data
 def load_and_clean():
-    df_main, df_iso = load_data()
-    return clean_data(df_main, df_iso)
-
-df, iso_df = load_and_clean()
-
+    if "df_main" not in st.session_state or "df_iso" not in st.session_state:
+        st.error("Data files not uploaded yet.")
+        st.stop()
+    
+    df_main = st.session_state.df_main.copy()
+    df_iso = st.session_state.df_iso.copy()
+    
+    # your cleaning code here...
+    df_main.columns = df_main.columns.str.replace('\xa0', ' ', regex=False).str.strip()
+    df_iso.columns = df_iso.columns.str.replace('\xa0', ' ', regex=False).str.strip()
+    
+    # your clean_data() if you still need it
+    df_main, df_iso = clean_data(df_main, df_iso)
+    
+    return df_main, df_iso
+    
 # === SIDEBAR FILTERS ===
 st.sidebar.header("Filters")
 
@@ -207,4 +239,5 @@ with col2:
     if fig:
         st.plotly_chart(fig, use_container_width=True)
     else:
+
         st.info("No CMJ comparison data")
