@@ -83,7 +83,7 @@ def plot_jump_height(df, athlete_name):
         return None
     
     athlete = row.iloc[0]
-    mean_sep = pd.to_numeric(athlete.get('CMJ MEAN Jump Height (Imp-Mom) (cm)'), errors='coerce')
+    mean_sep = pd.to_numeric(athlete.get('CMJ MEAN Jump Height (Imp-Mom)(cm)'), errors='coerce')
     
     if pd.isna(mean_sep):
         return None  # No data
@@ -1006,5 +1006,6 @@ def plot_cmj_vs_team(df, athlete_name):
     if rsi_ok:
         fig.update_xaxes(range=[0, 1], tick0=0, dtick=0.1, row=2, col=1)
         fig.update_yaxes(tickvals=[0], ticktext=[rsi_label], row=2, col=1)
+
 
     return fig
