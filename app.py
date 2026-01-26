@@ -3,37 +3,45 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 
-# ── Private data upload ── (only shown online)
-if "df_main" not in st.session_state:
-    st.sidebar.title("Upload Confidential Data (one-time)")
-    
-    main_csv = st.sidebar.file_uploader(
-        "1. Fencing preseason Final Data.csv",
-        type="csv"
-    )
-    iso_csv = st.sidebar.file_uploader(
-        "2. Fencing_Preseason_Isokinetic data.csv",
-        type="csv"
-    )
+# ── Private data upload ── (only shown when deployed online)
+st.sidebar.title("Upload Confidential Data (one-time)")
 
-    if main_csv and iso_csv:
-        st.session_state.df_main = pd.read_csv(main_csv, encoding='latin-1')
-        st.session_state.df_iso = pd.read_csv(iso_csv, encoding='latin-1')
-        st.sidebar.success("Files uploaded — dashboard ready!")
-    else:
-        st.sidebar.warning("Please upload both files above to continue.")
-        st.stop()   # ← stops execution until files are uploaded
+uploaded_main = st.sidebar.file_uploader(
+    "1. Fencing preseason Final Data.csv",
+    type="csv"
+)
+uploaded_iso = st.sidebar.file_uploader(
+    "2. Fencing_Preseason_Isokinetic data.csv",
+    type="csv"
+)
+
+if uploaded_main and uploaded_iso:
+    # Load once and store in session state
+    if "df_main" not in st.session_state:
+        st.session_state.df_main = pd.read_csv(uploaded_main, encoding='latin-1')
+        st.session_state.df_iso = pd.read_csv(uploaded_iso, encoding='latin-1')
+        
+        # Apply your column cleaning
+        st.session_state.df_main.columns = st.session_state.df_main.columns.str.replace('\xa0', ' ', regex=False).str.strip()
+        st.session_state.df_iso.columns = st.session_state.df_iso.columns.str.replace('\xa0', ' ', regex=False).str.strip()
+        
+        st.sidebar.success("Files uploaded successfully! Dashboard ready.")
+else:
+    st.sidebar.warning("Please upload both files above to continue.")
+    st.stop()
+
+# Use session state DataFrames everywhere
+df = st.session_state.df_main
+iso_df = st.session_state.df_iso
+
 # Import all your plotting functions
 from data_transform import (
-    load_data, clean_data,
     plot_jump_height, plot_peak_power_bw,
     plot_sl_board_jump, plot_knee_to_wall,
     plot_slj_asymmetry, plot_slh_rsi,
     plot_isokinetic_torque, plot_isokinetic_3box,
     plot_ybalance_directional, plot_cmj_vs_team
 )
-
-
 
 # === PAGE CONFIG & STYLE ===
 st.set_page_config(page_title="Fencing Preseason Dashboard", layout="wide", page_icon="fencing")
@@ -49,7 +57,7 @@ st.markdown("""
         border-radius: 10px; font-size: 20px; font-weight: bold; margin: 15px 0;
     }
     .plot-box {
-        background: white; padding: 20px; border-radius: 15px; 
+        background: white; padding: 20px; border-radius: 15px;
         box-shadow: 0 6px 15px rgba(0,0,0,0.1); margin: 20px 0; text-align: center;
         border: 1px solid #e0e0e0;
     }
@@ -57,29 +65,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# === LOAD & CLEAN DATA ===
-@st.cache_data
-def load_and_clean():
-    if "df_main" not in st.session_state or "df_iso" not in st.session_state:
-        st.error("Data files not uploaded yet.")
-        st.stop()
-    
-    df_main = st.session_state.df_main.copy()
-    df_iso = st.session_state.df_iso.copy()
-    
-    # your cleaning code here...
-    df_main.columns = df_main.columns.str.replace('\xa0', ' ', regex=False).str.strip()
-    df_iso.columns = df_iso.columns.str.replace('\xa0', ' ', regex=False).str.strip()
-    
-    # your clean_data() if you still need it
-    df_main, df_iso = clean_data(df_main, df_iso)
-    
-    return df_main, df_iso
-    
 # === SIDEBAR FILTERS ===
 st.sidebar.header("Filters")
 
-# Athlete filter
+# Athlete filter — now uses uploaded df
 athlete_list = ['All Athletes'] + sorted(df['Athletes'].dropna().unique().tolist())
 selected_athlete = st.sidebar.selectbox("Athlete", athlete_list)
 
@@ -93,13 +82,10 @@ selected_side = st.sidebar.selectbox("Dominant Side", side_options)
 
 # === APPLY FILTERS ===
 filtered_df = df.copy()
-
 if selected_athlete != 'All Athletes':
     filtered_df = filtered_df[filtered_df['Athletes'] == selected_athlete]
-
 if selected_group != 'All Groups':
     filtered_df = filtered_df[filtered_df['Group'] == selected_group]
-
 if selected_side != 'All Sides':
     filtered_df = filtered_df[filtered_df['Dominant side'] == selected_side[0]]  # 'L' or 'R'
 
@@ -107,14 +93,14 @@ if filtered_df.empty:
     st.error("No athletes match the selected filters.")
     st.stop()
 
-# Use first athlete for display (or loop if you want all)
+# Use first athlete for display
 row = filtered_df.iloc[0]
 selected_athlete = row['Athletes']
 gender = "Male" if "M" in row.get('Group', '') else "Female"
 dom = row.get('Dominant side', 'R')
 
 # === MAIN TITLE ===
-st.markdown(f'<div class="header-title">ATHLETE PROFILE: {selected_athlete} • {gender} • Dominant: {dom}</div>', 
+st.markdown(f'<div class="header-title">ATHLETE PROFILE: {selected_athlete} • {gender} • Dominant: {dom}</div>',
             unsafe_allow_html=True)
 
 # === ROW 1 ===
@@ -135,7 +121,7 @@ with col2:
         st.pyplot(fig)
         plt.close(fig)
 
-# === ROW 2 - EXACTLY LIKE YOUR HTML DESIGN ===
+# === ROW 2 ===
 st.markdown("""
 <div style="display: flex; gap: 20px; margin: 40px 0;">
     <div style="flex: 1; background-color: #001f3f; color: white; padding: 20px; text-align: center; border-radius: 15px; font-size: 28px; font-weight: bold;">
@@ -147,9 +133,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Two columns for the graphs
 col1, col2 = st.columns(2)
-
 with col1:
     fig = plot_sl_board_jump(filtered_df, selected_athlete)
     if fig:
@@ -185,16 +169,13 @@ with col2:
         plt.close(fig)
 
 # === ROW 4 ===
-# === ROW 4 - ONE HEADER + TWO GRAPHS BELOW (NO SUB-HEADERS) ===
 st.markdown("""
 <div style="background-color: #001f3f; color: white; padding: 22px; text-align: center; border-radius: 15px; font-size: 30px; font-weight: bold; margin: 40px 0;">
     KNEE ISOKINETIC TEST
 </div>
 """, unsafe_allow_html=True)
 
-# Two graphs in one row
 col1, col2 = st.columns(2)
-
 with col1:
     fig = plot_isokinetic_torque(iso_df, selected_athlete)
     if fig:
@@ -211,7 +192,7 @@ with col2:
     else:
         st.info("No isokinetic profile data")
 
-# === ROW 5 - BEAUTIFUL DUAL HEADER (NO SUB-HEADERS) ===
+# === ROW 5 ===
 st.markdown("""
 <div style="display: flex; gap: 20px; margin: 40px 0;">
     <div style="flex: 1; background-color: #001f3f; color: white; padding: 22px; text-align: center; border-radius: 15px; font-size: 28px; font-weight: bold;">
@@ -223,21 +204,17 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Two columns for the graphs
 col1, col2 = st.columns(2)
-
 with col1:
     fig = plot_ybalance_directional(filtered_df, selected_athlete)
     if fig:
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("No Y-Balance Test data")    
+        st.info("No Y-Balance Test data")
 
 with col2:
-    # ← FIXED: Use FULL df for team average, NOT filtered_df
-    fig = plot_cmj_vs_team(df, selected_athlete)
+    fig = plot_cmj_vs_team(df, selected_athlete)  # ← df is now from session state
     if fig:
         st.plotly_chart(fig, use_container_width=True)
     else:
-
         st.info("No CMJ comparison data")
