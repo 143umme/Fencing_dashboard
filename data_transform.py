@@ -8,6 +8,21 @@ from matplotlib.patches import Rectangle
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import re
+import threading
+import time
+import requests
+
+def keep_app_awake():
+    url = st.secrets.get("APP_URL", "https://fencingdashboard-2025.streamlit.app/")
+    while True:
+        try:
+            requests.get(url, timeout=10)
+        except:
+            pass
+        time.sleep(1500)  # ping every ~25 minutes
+
+# Start the background thread
+threading.Thread(target=keep_app_awake, daemon=True).start()
 
 def load_data():
     """
@@ -1029,4 +1044,5 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
 
