@@ -80,35 +80,56 @@ def plot_jump_height(df, athlete_name):
     # Filter athlete
     row = df[df['Athletes'] == athlete_name]
     if row.empty:
+        st.info(f"No data found for athlete: {athlete_name}")
         return None
-    
+
     athlete = row.iloc[0]
-    mean_sep = pd.to_numeric(athlete.get('CMJ MEAN Jump Height (Imp-Mom)(cm)'), errors='coerce')
+
+    # Robust column search (handles cleaned or slightly different names)
+    possible_cols = [
+        'CMJ MEAN Jump Height (Imp-Mom)(cm)',
+        'CMJ MEAN Jump Height (Imp-Mom) (cm)',
+        'CMJ MEAN Jump Height (Imp-Mom)'
+    ]
+    
+    col = None
+    for c in possible_cols:
+        if c in df.columns:
+            col = c
+            break
+    
+    if col is None:
+        st.info("Jump Height column not found in data.")
+        return None
+
+    mean_sep = pd.to_numeric(athlete.get(col), errors='coerce')
     
     if pd.isna(mean_sep):
-        return None  # No data
-    
+        st.info(f"No Jump Height data available for {athlete_name}")
+        return None
+
+    # Your original data setup
     years = [2025, 2026, 2027]
     mean_values = [mean_sep, np.nan, np.nan]
-    
+
     fig, ax = plt.subplots(figsize=(45, 40))
-    
+
     # Main line + points
     ax.plot(years, mean_values,
             marker='o', markersize=60, linewidth=3.5,
             color='#003366', label='MEAN Jump Height', zorder=3)
-    
+
     # Highlight 2025
     ax.plot(2025, mean_sep, 'o', markersize=100, color='#003366', zorder=7)
     ax.text(2025, mean_sep - 2, f"{mean_sep:.1f}", ha='center', va='top',
             fontweight='bold', color='#003366', fontsize=60)
-    
+
     # "No Data" labels
     for y in [2026, 2027]:
         ax.text(y, 30, "No Data", ha='center', va='center', fontsize=45,
                 color='gray', style='italic', alpha=0.7)
-    
-    # Formatting (exactly like your code)
+
+    # Formatting (exactly like your original)
     ax.set_xlim(2024.5, 2027.5)
     ax.set_ylim(0, 80)
     ax.tick_params(axis='y', labelsize=60, width=3, length=8)
@@ -117,10 +138,10 @@ def plot_jump_height(df, athlete_name):
     ax.set_ylabel('Jump Height (cm)', fontsize=60, fontweight='bold')
     ax.grid(True, axis='y', linestyle='-', color='lightgray', alpha=0.7, linewidth=0.8)
     ax.grid(True, axis='x', linestyle='-', color='lightgray', alpha=0.3)
-    
+
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 0.92),
               ncol=2, frameon=True, fancybox=True, shadow=True, fontsize=60)
-    
+
     # Clean look
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -128,10 +149,9 @@ def plot_jump_height(df, athlete_name):
     ax.spines['bottom'].set_color('lightgray')
     ax.set_facecolor('#f8f9fa')
     fig.patch.set_facecolor('white')
-    
+
     plt.tight_layout(rect=[0, 0, 1, 0.92])
     return fig
-
 # CMJ Peak Power
 def plot_peak_power_bw(df, athlete_name):
     """
@@ -1009,3 +1029,4 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
