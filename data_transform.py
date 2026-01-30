@@ -808,7 +808,7 @@ def plot_ybalance_directional(df, athlete_name):
         mode='lines+markers',
         name='Left Leg',
         line=dict(color='blue'),
-        marker=dict(size=15)
+        marker=dict(size=12)
     ))
     
     # Right Leg (Orange)
@@ -818,7 +818,7 @@ def plot_ybalance_directional(df, athlete_name):
         mode='lines+markers',
         name='Right Leg',
         line=dict(color='orange'),
-        marker=dict(size=15)
+        marker=dict(size=12)
     ))
     
     # Normative line at 94%
@@ -831,7 +831,7 @@ def plot_ybalance_directional(df, athlete_name):
         x=1.0, y=1.0,
         text="Diff Normative Value: <4%",
         showarrow=False,
-        font=dict(size=13),
+        font=dict(size=10),
         bgcolor="white",
         opacity=True,
         xanchor="right", yanchor="top"
@@ -848,7 +848,7 @@ def plot_ybalance_directional(df, athlete_name):
                 x=mid_x,
                 text=f"{diff:.1f}%",
                 showarrow=False,
-                font=dict(size=15),
+                font=dict(size=12),
                 bgcolor="white",
                 opacity=0.8
             )
@@ -860,7 +860,7 @@ def plot_ybalance_directional(df, athlete_name):
         xaxis_title='Reach Percentage (%)',
         height=600,  # MUCH BIGGER
         width=1600,
-        font=dict(family="Arial Black", size=13, color="black"),
+        font=dict(family="Arial Black", size=12, color="black"),
         showlegend=True,
         legend=dict(x=1.0, y=0.9, xanchor="right", yanchor="top"),
         template='plotly_white',
@@ -875,7 +875,8 @@ def plot_ybalance_directional(df, athlete_name):
         fig.update_xaxes(range=[max(0, x_min), x_max])
     
     return fig
-    
+
+#CMJ   
 def plot_cmj_vs_team(df, athlete_name):
     # Clean columns (your ultimate cleaning)
     df = df.copy()
@@ -969,7 +970,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 y=main_labels,
                 mode='markers',
                 name=athlete_name,
-                marker=dict(color='#2ca02c', size=[abs(v) * 0.3 for v in main_athlete_vals], sizemode='area', sizemin=20,
+                marker=dict(color='#2ca02c', size=[abs(v) * 0.1 for v in main_athlete_vals], sizemode='area', sizemin=20,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Athlete: %{x:.1f}<extra></extra>',
                 legendgroup="athlete"
@@ -982,7 +983,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 y=main_labels,
                 mode='markers',
                 name=f'{athlete_gender} Team Average',
-                marker=dict(color='#ff7f0e', size=[abs(v) * 0.3 for v in main_team_vals], sizemode='area', sizemin=20,
+                marker=dict(color='#ff7f0e', size=[abs(v) * 0.1 for v in main_team_vals], sizemode='area', sizemin=20,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Team Avg: %{x:.1f}<extra></extra>',
                 legendgroup="team"
@@ -1013,7 +1014,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 mode='markers',
                 name=f'{athlete_gender} Team Average',
                 showlegend=False,
-                marker=dict(color='#ff7f0e', size=rsi_team * 70, sizemode='area', sizemin=20,
+                marker=dict(color='#ff7f0e', size=rsi_team * 50, sizemode='area', sizemin=20,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Team Avg: %{x:.3f}<extra></extra>',
                 legendgroup="team"
@@ -1044,6 +1045,7 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
 
 
 
