@@ -858,7 +858,7 @@ def plot_ybalance_directional(df, athlete_name):
         title='',
         yaxis_title='Test Metric',
         xaxis_title='Reach Percentage (%)',
-        height=800,  # MUCH BIGGER
+        height=600,  # MUCH BIGGER
         width=1200,
         font=dict(family="Arial Black", size=13, color="black"),
         showlegend=True,
@@ -1023,7 +1023,7 @@ def plot_cmj_vs_team(df, athlete_name):
 
     # === LAYOUT ===
     fig.update_layout(
-        height=800,
+        height=600,
         width=1200,
         template="plotly_white",
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01,
@@ -1044,5 +1044,6 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
 
 
