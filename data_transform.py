@@ -970,7 +970,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 y=main_labels,
                 mode='markers',
                 name=athlete_name,
-                marker=dict(color='#2ca02c', size=[abs(v) * 0.1 for v in main_athlete_vals], sizemode='area', sizemin=20,
+                marker=dict(color='#2ca02c', size=[abs(v) * 0.5 for v in main_athlete_vals], sizemode='area', sizemin=15,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Athlete: %{x:.1f}<extra></extra>',
                 legendgroup="athlete"
@@ -983,7 +983,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 y=main_labels,
                 mode='markers',
                 name=f'{athlete_gender} Team Average',
-                marker=dict(color='#ff7f0e', size=[abs(v) * 0.1 for v in main_team_vals], sizemode='area', sizemin=20,
+                marker=dict(color='#ff7f0e', size=[abs(v) * 0.5 for v in main_team_vals], sizemode='area', sizemin=15,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Team Avg: %{x:.1f}<extra></extra>',
                 legendgroup="team"
@@ -1014,7 +1014,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 mode='markers',
                 name=f'{athlete_gender} Team Average',
                 showlegend=False,
-                marker=dict(color='#ff7f0e', size=rsi_team * 50, sizemode='area', sizemin=20,
+                marker=dict(color='#ff7f0e', size=rsi_team * 60, sizemode='area', sizemin=20,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Team Avg: %{x:.3f}<extra></extra>',
                 legendgroup="team"
@@ -1045,6 +1045,7 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
 
 
 
