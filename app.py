@@ -107,7 +107,7 @@ st.markdown(f'<div class="header-title">ATHLETE PROFILE: {selected_athlete} • 
 st.markdown('<div class="header-title">PERFORMANCE DATA (CMJ)</div>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 
-    with col1:
+with col1:
     st.markdown('<div class="sub-header">JUMP HEIGHT (CM)</div>', unsafe_allow_html=True)
     fig = plot_jump_height(filtered_df, selected_athlete)
     if fig is not None:
@@ -219,4 +219,5 @@ with col2:
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("No CMJ comparison data")
+
 
