@@ -858,8 +858,8 @@ def plot_ybalance_directional(df, athlete_name):
         title='',
         yaxis_title='Test Metric',
         xaxis_title='Reach Percentage (%)',
-        height=800,  # MUCH BIGGER
-        width=1000,
+        height=600,  # MUCH BIGGER
+        width=1600,
         font=dict(family="Arial Black", size=13, color="black"),
         showlegend=True,
         legend=dict(x=1.0, y=0.9, xanchor="right", yanchor="top"),
@@ -969,7 +969,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 y=main_labels,
                 mode='markers',
                 name=athlete_name,
-                marker=dict(color='#2ca02c', size=[abs(v) * 0.5 for v in main_athlete_vals], sizemode='area', sizemin=20,
+                marker=dict(color='#2ca02c', size=[abs(v) * 0.3 for v in main_athlete_vals], sizemode='area', sizemin=20,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Athlete: %{x:.1f}<extra></extra>',
                 legendgroup="athlete"
@@ -982,7 +982,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 y=main_labels,
                 mode='markers',
                 name=f'{athlete_gender} Team Average',
-                marker=dict(color='#ff7f0e', size=[abs(v) * 0.5 for v in main_team_vals], sizemode='area', sizemin=20,
+                marker=dict(color='#ff7f0e', size=[abs(v) * 0.3 for v in main_team_vals], sizemode='area', sizemin=20,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Team Avg: %{x:.1f}<extra></extra>',
                 legendgroup="team"
@@ -1013,7 +1013,7 @@ def plot_cmj_vs_team(df, athlete_name):
                 mode='markers',
                 name=f'{athlete_gender} Team Average',
                 showlegend=False,
-                marker=dict(color='#ff7f0e', size=rsi_team * 80, sizemode='area', sizemin=20,
+                marker=dict(color='#ff7f0e', size=rsi_team * 70, sizemode='area', sizemin=20,
                             line=dict(width=1, color='black')),
                 hovertemplate='<b>%{y}</b><br>Team Avg: %{x:.3f}<extra></extra>',
                 legendgroup="team"
@@ -1024,7 +1024,7 @@ def plot_cmj_vs_team(df, athlete_name):
     # === LAYOUT ===
     fig.update_layout(
         height=600,
-        width=1400,
+        width=1600,
         template="plotly_white",
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01,
                     bgcolor="rgba(255,255,255,0.9)", bordercolor="black", borderwidth=1),
@@ -1044,6 +1044,7 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
 
 
 
