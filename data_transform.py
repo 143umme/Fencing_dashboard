@@ -86,21 +86,20 @@ if __name__ == "__main__":
     print(f"Isokinetic data: {iso.shape}")
 
 
-# Jump height
 def plot_jump_height(df, athlete_name):
     """
     Creates the exact Jump Height (CM) graph from your Jupyter notebook.
     Works dynamically for any selected athlete.
+    Returns None silently if no data (no error, no message).
     """
     # Filter athlete
     row = df[df['Athletes'] == athlete_name]
     if row.empty:
-        st.info(f"No data found for athlete: {athlete_name}")
-        return None
+        return None  # No crash, just empty space
 
     athlete = row.iloc[0]
 
-    # Robust column search (handles cleaned or slightly different names)
+    # Robust column search (handles cleaned names with/without spaces or units)
     possible_cols = [
         'CMJ MEAN Jump Height (Imp-Mom)(cm)',
         'CMJ MEAN Jump Height (Imp-Mom) (cm)',
@@ -114,16 +113,14 @@ def plot_jump_height(df, athlete_name):
             break
     
     if col is None:
-        st.info("Jump Height column not found in data.")
-        return None
+        return None  # Column not found → empty space
 
     mean_sep = pd.to_numeric(athlete.get(col), errors='coerce')
     
     if pd.isna(mean_sep):
-        st.info(f"No Jump Height data available for {athlete_name}")
-        return None
+        return None  # No data → empty space (no error)
 
-    # Your original data setup
+    # ── Your original plotting logic (unchanged) ──
     years = [2025, 2026, 2027]
     mean_values = [mean_sep, np.nan, np.nan]
 
@@ -1045,6 +1042,7 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
 
 
 
