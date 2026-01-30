@@ -1023,8 +1023,8 @@ def plot_cmj_vs_team(df, athlete_name):
 
     # === LAYOUT ===
     fig.update_layout(
-        height=800,
-        width=1000,
+        height=600,
+        width=1400,
         template="plotly_white",
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01,
                     bgcolor="rgba(255,255,255,0.9)", bordercolor="black", borderwidth=1),
@@ -1044,6 +1044,7 @@ def plot_cmj_vs_team(df, athlete_name):
 
 
     return fig
+
 
 
 
